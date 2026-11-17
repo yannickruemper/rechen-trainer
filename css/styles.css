@@ -25,6 +25,10 @@
 
 * { box-sizing: border-box; }
 
+/* Das hidden-Attribut muss immer gewinnen, auch gegen Klassen wie .fraction-answer
+   oder .task-expression, die selbst einen display-Wert (z. B. inline-flex) setzen. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   padding: 0;
