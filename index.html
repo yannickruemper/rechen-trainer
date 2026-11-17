@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="description" content="Multiplikation, Addition, Subtraktion, Division und Brüche üben mit erklärten Rechenwegen – komplett offline, ohne Login." />
+<meta name="theme-color" content="#2458d9" />
+<title>Rechen-Trainer – Grundrechenarten üben</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/png" href="icons/favicon-32.png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Rechen-Trainer" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<header class="app-header">
+  <h1>🧮 Rechen-Trainer</h1>
+  <nav class="app-nav" aria-label="Hauptnavigation">
+    <button type="button" id="nav-start" class="nav-btn" aria-pressed="true">Üben</button>
+    <button type="button" id="nav-progress" class="nav-btn" aria-pressed="false">Mein Fortschritt</button>
+  </nav>
+</header>
+
+<main id="app">
+
+  <!-- Startbildschirm: Operations-, Modus- und Schwierigkeitswahl -->
+  <section id="view-start" class="view" aria-labelledby="start-heading">
+    <h2 id="start-heading">Was möchtest du üben?</h2>
+
+    <div class="operation-grid" id="operation-grid"></div>
+
+    <div class="mode-grid" id="mode-grid"></div>
+
+    <div class="start-options">
+      <fieldset class="difficulty-select">
+        <legend>Schwierigkeitsstufe</legend>
+        <label><input type="radio" name="difficulty" value="1" checked /> Leicht</label>
+        <label><input type="radio" name="difficulty" value="2" /> Mittel</label>
+        <label><input type="radio" name="difficulty" value="3" /> Schwer</label>
+      </fieldset>
+
+      <fieldset class="rows-select" id="rows-select" hidden>
+        <legend id="rows-legend">Welche Reihen möchtest du üben?</legend>
+        <div class="rows-grid" id="rows-grid"></div>
+        <label class="rows-all"><input type="checkbox" id="rows-all" checked /> Alle mischen</label>
+      </fieldset>
+    </div>
+
+    <button type="button" id="start-practice" class="primary-btn" disabled>Los geht's!</button>
+  </section>
+
+  <!-- Übungsbildschirm -->
+  <section id="view-practice" class="view" hidden aria-labelledby="practice-heading">
+    <div class="practice-top">
+      <button type="button" id="back-to-start" class="link-btn">← Modus wechseln</button>
+      <h2 id="practice-heading" class="sr-only">Aufgabe lösen</h2>
+    </div>
+
+    <div class="task-card">
+      <div class="task-expression" id="task-expression" aria-live="off">
+        <span id="task-a">7</span>
+        <span class="op" id="task-op">×</span>
+        <span id="task-b">8</span>
+        <span class="op">=</span>
+        <span id="task-answer-slot" class="answer-slot">?</span>
+      </div>
+
+      <div class="task-expression" id="task-expression-fraction" hidden aria-live="off">
+        <span id="frac1-display"></span>
+        <span class="op" id="task-frac-op">+</span>
+        <span id="frac2-display"></span>
+        <span class="op">=</span>
+      </div>
+
+      <form id="answer-form" autocomplete="off">
+        <label for="answer-input" class="sr-only">Deine Antwort</label>
+        <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="answer-input" class="answer-input" />
+
+        <span class="fraction-answer" id="fraction-answer" hidden>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" id="answer-num" class="fraction-input-box" aria-label="Zähler deiner Antwort" />
+          <span class="fraction-rule" aria-hidden="true"></span>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" id="answer-den" class="fraction-input-box" aria-label="Nenner deiner Antwort" />
+        </span>
+
+        <button type="submit" class="primary-btn" id="check-btn">Prüfen</button>
+      </form>
+
+      <div class="keypad" id="keypad" aria-hidden="true"></div>
+    </div>
+
+    <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+    <div id="explanation-panel" class="explanation-panel" hidden>
+      <div class="explanation-header">
+        <h3 id="explanation-title">Rechenweg</h3>
+        <button type="button" id="other-way-btn" class="link-btn" hidden>Anderer Weg</button>
+      </div>
+      <div id="explanation-steps" class="explanation-steps"></div>
+      <div id="explanation-visual" class="explanation-visual"></div>
+      <button type="button" id="next-step-btn" class="primary-btn">Weiter</button>
+    </div>
+
+    <div class="practice-actions">
+      <button type="button" id="show-explanation-btn" class="secondary-btn" hidden>Rechenweg zeigen</button>
+      <button type="button" id="next-task-btn" class="primary-btn" hidden>Nächste Aufgabe →</button>
+    </div>
+  </section>
+
+  <!-- Fortschrittsbildschirm -->
+  <section id="view-progress" class="view" hidden aria-labelledby="progress-heading">
+    <h2 id="progress-heading">Mein Fortschritt</h2>
+
+    <div id="stats-table-wrap">
+      <table class="stats-table" id="stats-table">
+        <thead>
+          <tr><th>Rechenart</th><th>Modus</th><th>Aufgaben</th><th>Richtig</th><th>Trefferquote</th><th>Ø Zeit</th></tr>
+        </thead>
+        <tbody id="stats-table-body"></tbody>
+      </table>
+    </div>
+
+    <h3>Heatmap</h3>
+    <div class="heatmap-tabs" id="heatmap-tabs"></div>
+    <p class="heatmap-hint">Je grüner und voller das Feld, desto sicherer beherrschst du diese Aufgabe.</p>
+    <div id="heatmap" class="heatmap" role="table" aria-label="Beherrschungs-Heatmap"></div>
+
+    <button type="button" id="reset-progress-btn" class="danger-btn">Fortschritt zurücksetzen</button>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <p>Kein Login, keine externen Tracker – dein Fortschritt bleibt nur auf diesem Gerät gespeichert.</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

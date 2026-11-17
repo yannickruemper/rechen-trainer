@@ -1,0 +1,9 @@
+{
+  "name": "multiplikations-trainer",
+  "private": true,
+  "type": "module",
+  "description": "Statische Lern-Webseite zum Üben von Multiplikationen, ohne Build-Schritt. package.json wird nur benötigt, damit Node die js-Dateien als ES-Module behandelt (für die Tests).",
+  "scripts": {
+    "test": "node tests/run-tests.js"
+  }
+}
